@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018, Dataspeed Inc., 2018-2021 New Eagle, All rights reserved.
+// Copyright (c) 2018-2021 New Eagle, Copyright (c) 2015-2018, Dataspeed Inc.
 // All rights reserved.
 //
 // Software License Agreement (BSD License 2.0)
@@ -30,55 +30,22 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef RAPTOR_DBW_CAN__DISPATCH_HPP_
-#define RAPTOR_DBW_CAN__DISPATCH_HPP_
+#include "raptor_dbw_joystick/raptor_dbw_joystick.hpp"
 
-#include <stdint.h>
+#include <memory>
 
-namespace raptor_dbw_can
+int main(int argc, char ** argv)
 {
-typedef enum
-{
-  VIN_MUX_VIN0  = 0x00,
-  VIN_MUX_VIN1  = 0x01,
-  VIN_MUX_VIN2  = 0x02,
-} VinMux;
+  rclcpp::init(argc, argv);
+  rclcpp::NodeOptions options;
+  rclcpp::executors::SingleThreadedExecutor exec;
 
-typedef enum
-{
-  WHEEL_SPEED_MUX0  = 0x00,
-  WHEEL_SPEED_MUX1  = 0x01,
-  WHEEL_SPEED_MUX2  = 0x02,
-} WheelSpeedMux;
+  // Create RaptorDbwJoystick class
+  auto node = std::make_shared<raptor_dbw_joystick::RaptorDbwJoystick>(options);
+  exec.add_node(node->get_node_base_interface());
+  exec.spin();
 
-#undef BUILD_ASSERT
+  rclcpp::shutdown();
 
-enum
-{
-  ID_BRAKE_CMD                  = 0x2F04,
-  ID_BRAKE_REPORT               = 0x1F04,
-  ID_ACCELERATOR_PEDAL_CMD      = 0x2F01,
-  ID_ACCEL_PEDAL_REPORT         = 0x1F02,
-  ID_STEERING_CMD               = 0x2F03,
-  ID_STEERING_REPORT            = 0x1F03,
-  ID_GEAR_CMD                   = 0x2F05,
-  ID_GEAR_REPORT                = 0x1F05,
-  ID_REPORT_WHEEL_SPEED         = 0x1F0B,
-  ID_REPORT_IMU                 = 0x1F0A,
-  ID_REPORT_TIRE_PRESSURE       = 0x1f07,
-  ID_REPORT_SURROUND            = 0x1f10,
-  ID_VIN                        = 0x1F08,
-  ID_REPORT_DRIVER_INPUT        = 0x1F0F,
-  ID_REPORT_WHEEL_POSITION      = 0x1F06,
-  ID_MISC_REPORT                = 0x1F01,
-  ID_LOW_VOLTAGE_SYSTEM_REPORT  = 0x1F11,
-  ID_BRAKE_2_REPORT             = 0x1F12,
-  ID_STEERING_2_REPORT          = 0x1F13,
-  ID_OTHER_ACTUATORS_REPORT     = 0x1F14,
-  ID_FAULT_ACTION_REPORT        = 0x1F15,
-  ID_HMI_GLOBAL_ENABLE_REPORT   = 0x3f01,
-};
-
-}  // namespace raptor_dbw_can
-
-#endif  // RAPTOR_DBW_CAN__DISPATCH_HPP_
+  return 0;
+}

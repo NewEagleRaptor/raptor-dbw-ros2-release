@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018, Dataspeed Inc., 2018-2021 New Eagle, All rights reserved.
+// Copyright (c) 2021 New Eagle, All rights reserved.
 // All rights reserved.
 //
 // Software License Agreement (BSD License 2.0)
@@ -30,55 +30,78 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef RAPTOR_DBW_CAN__DISPATCH_HPP_
-#define RAPTOR_DBW_CAN__DISPATCH_HPP_
+#ifndef RAPTOR_CAN_DBC_PARSER__DBCMESSAGE_HPP_
+#define RAPTOR_CAN_DBC_PARSER__DBCMESSAGE_HPP_
 
-#include <stdint.h>
+#include <can_msgs/msg/frame.hpp>
+#include <raptor_can_dbc_parser/DbcSignal.hpp>
 
-namespace raptor_dbw_can
+#include <map>
+#include <string>
+
+namespace NewEagle
 {
-typedef enum
+struct DbcMessageComment
 {
-  VIN_MUX_VIN0  = 0x00,
-  VIN_MUX_VIN1  = 0x01,
-  VIN_MUX_VIN2  = 0x02,
-} VinMux;
-
-typedef enum
-{
-  WHEEL_SPEED_MUX0  = 0x00,
-  WHEEL_SPEED_MUX1  = 0x01,
-  WHEEL_SPEED_MUX2  = 0x02,
-} WheelSpeedMux;
-
-#undef BUILD_ASSERT
-
-enum
-{
-  ID_BRAKE_CMD                  = 0x2F04,
-  ID_BRAKE_REPORT               = 0x1F04,
-  ID_ACCELERATOR_PEDAL_CMD      = 0x2F01,
-  ID_ACCEL_PEDAL_REPORT         = 0x1F02,
-  ID_STEERING_CMD               = 0x2F03,
-  ID_STEERING_REPORT            = 0x1F03,
-  ID_GEAR_CMD                   = 0x2F05,
-  ID_GEAR_REPORT                = 0x1F05,
-  ID_REPORT_WHEEL_SPEED         = 0x1F0B,
-  ID_REPORT_IMU                 = 0x1F0A,
-  ID_REPORT_TIRE_PRESSURE       = 0x1f07,
-  ID_REPORT_SURROUND            = 0x1f10,
-  ID_VIN                        = 0x1F08,
-  ID_REPORT_DRIVER_INPUT        = 0x1F0F,
-  ID_REPORT_WHEEL_POSITION      = 0x1F06,
-  ID_MISC_REPORT                = 0x1F01,
-  ID_LOW_VOLTAGE_SYSTEM_REPORT  = 0x1F11,
-  ID_BRAKE_2_REPORT             = 0x1F12,
-  ID_STEERING_2_REPORT          = 0x1F13,
-  ID_OTHER_ACTUATORS_REPORT     = 0x1F14,
-  ID_FAULT_ACTION_REPORT        = 0x1F15,
-  ID_HMI_GLOBAL_ENABLE_REPORT   = 0x3f01,
+  uint32_t Id;
+  std::string Comment;
 };
 
-}  // namespace raptor_dbw_can
+enum IdType
+{
+  STD = 0,
+  EXT = 1
+};
 
-#endif  // RAPTOR_DBW_CAN__DISPATCH_HPP_
+typedef struct
+{
+  uint8_t : 8;
+  uint8_t : 8;
+  uint8_t : 8;
+  uint8_t : 8;
+  uint8_t : 8;
+  uint8_t : 8;
+  uint8_t : 8;
+  uint8_t : 8;
+} EmptyData;
+
+class DbcMessage
+{
+public:
+  DbcMessage();
+  DbcMessage(
+    uint8_t dlc,
+    uint32_t id,
+    IdType idType,
+    std::string name,
+    uint32_t rawId
+  );
+
+  uint8_t GetDlc();
+  uint32_t GetId();
+  IdType GetIdType();
+  std::string GetName();
+  can_msgs::msg::Frame GetFrame();
+  uint32_t GetSignalCount();
+  void SetFrame(const can_msgs::msg::Frame::SharedPtr msg);
+  void AddSignal(std::string signalName, NewEagle::DbcSignal signal);
+  NewEagle::DbcSignal * GetSignal(std::string signalName);
+  void SetRawText(std::string rawText);
+  uint32_t GetRawId();
+  void SetComment(NewEagle::DbcMessageComment comment);
+  std::map<std::string, NewEagle::DbcSignal> * GetSignals();
+  bool AnyMultiplexedSignals();
+
+private:
+  std::map<std::string, NewEagle::DbcSignal> _signals;
+  uint8_t _data[8];
+  uint8_t _dlc;
+  uint32_t _id;
+  IdType _idType;
+  std::string _name;
+  uint32_t _rawId;
+  NewEagle::DbcMessageComment _comment;
+};
+}  // namespace NewEagle
+
+#endif  // RAPTOR_CAN_DBC_PARSER__DBCMESSAGE_HPP_
