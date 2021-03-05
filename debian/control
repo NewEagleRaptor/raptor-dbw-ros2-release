@@ -1,0 +1,12 @@
+Source: ros-dashing-raptor-dbw-can
+Section: misc
+Priority: optional
+Maintainer: New Eagle <newagleraptorgithub@neweagle.net>
+Build-Depends: debhelper (>= 9.0.0), ros-dashing-ament-cmake-auto, ros-dashing-ament-lint-auto, ros-dashing-ament-lint-common, ros-dashing-can-msgs, ros-dashing-geometry-msgs, ros-dashing-raptor-can-dbc-parser, ros-dashing-raptor-dbw-msgs, ros-dashing-raptor-pdu, ros-dashing-raptor-pdu-msgs, ros-dashing-rclcpp, ros-dashing-sensor-msgs, ros-dashing-std-msgs, ros-dashing-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-dashing-raptor-dbw-can
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-dashing-can-msgs, ros-dashing-geometry-msgs, ros-dashing-raptor-can-dbc-parser, ros-dashing-raptor-dbw-msgs, ros-dashing-raptor-pdu, ros-dashing-raptor-pdu-msgs, ros-dashing-rclcpp, ros-dashing-sensor-msgs, ros-dashing-std-msgs, ros-dashing-ros-workspace
+Description: CAN translator for drive-by-wire interface to the New Eagle Raptor DBW kit
