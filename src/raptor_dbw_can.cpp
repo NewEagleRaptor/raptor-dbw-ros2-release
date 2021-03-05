@@ -1,32 +1,36 @@
 // Copyright (c) 2015-2018, Dataspeed Inc., 2018-2020 New Eagle, All rights reserved.
+// All rights reserved.
+//
+// Software License Agreement (BSD License 2.0)
 //
 // Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
+// modification, are permitted provided that the following conditions
+// are met:
 //
-// * Redistributions of source code must retain the above copyright
-//   notice, this list of conditions and the following disclaimer.
+//  * Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above
+//    copyright notice, this list of conditions and the following
+//    disclaimer in the documentation and/or other materials provided
+//    with the distribution.
+//  * Neither the name of {copyright_holder} nor the names of its
+//    contributors may be used to endorse or promote products derived
+//    from this software without specific prior written permission.
 //
-// * Redistributions in binary form must reproduce the above copyright
-//   notice, this list of conditions and the following disclaimer in the
-//   documentation and/or other materials provided with the distribution.
-//
-// * Neither the name of the {copyright_holder} nor the names of its
-//   contributors may be used to endorse or promote products derived from
-//   this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+// BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "raptor_dbw_can/DbwNode.hpp"
+#include "raptor_dbw_can/raptor_dbw_can.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -35,7 +39,7 @@
 namespace raptor_dbw_can
 {
 
-DbwNode::DbwNode(const rclcpp::NodeOptions & options)
+RaptorDbwCAN::RaptorDbwCAN(const rclcpp::NodeOptions & options)
 : Node("raptor_dbw_can_node", options)
 {
   dbcFile_ = this->declare_parameter("dbw_dbc_file", "");
@@ -134,62 +138,64 @@ DbwNode::DbwNode(const rclcpp::NodeOptions & options)
 
   // Set up Subscribers
   sub_enable_ = this->create_subscription<std_msgs::msg::Empty>(
-    "enable", 10, std::bind(&DbwNode::recvEnable, this, std::placeholders::_1));
+    "enable", 10, std::bind(&RaptorDbwCAN::recvEnable, this, std::placeholders::_1));
 
   sub_disable_ = this->create_subscription<std_msgs::msg::Empty>(
-    "disable", 10, std::bind(&DbwNode::recvDisable, this, std::placeholders::_1));
+    "disable", 10, std::bind(&RaptorDbwCAN::recvDisable, this, std::placeholders::_1));
 
   sub_can_ = this->create_subscription<can_msgs::msg::Frame>(
-    "can_rx", 500, std::bind(&DbwNode::recvCAN, this, std::placeholders::_1));
+    "can_rx", 500, std::bind(&RaptorDbwCAN::recvCAN, this, std::placeholders::_1));
 
   sub_brake_ = this->create_subscription<raptor_dbw_msgs::msg::BrakeCmd>(
-    "brake_cmd", 1, std::bind(&DbwNode::recvBrakeCmd, this, std::placeholders::_1));
+    "brake_cmd", 1, std::bind(&RaptorDbwCAN::recvBrakeCmd, this, std::placeholders::_1));
 
   sub_accelerator_pedal_ = this->create_subscription<raptor_dbw_msgs::msg::AcceleratorPedalCmd>(
     "accelerator_pedal_cmd", 1,
-    std::bind(&DbwNode::recvAcceleratorPedalCmd, this, std::placeholders::_1));
+    std::bind(&RaptorDbwCAN::recvAcceleratorPedalCmd, this, std::placeholders::_1));
 
   sub_steering_ = this->create_subscription<raptor_dbw_msgs::msg::SteeringCmd>(
-    "steering_cmd", 1, std::bind(&DbwNode::recvSteeringCmd, this, std::placeholders::_1));
+    "steering_cmd", 1, std::bind(&RaptorDbwCAN::recvSteeringCmd, this, std::placeholders::_1));
 
   sub_gear_ = this->create_subscription<raptor_dbw_msgs::msg::GearCmd>(
-    "gear_cmd", 1, std::bind(&DbwNode::recvGearCmd, this, std::placeholders::_1));
+    "gear_cmd", 1, std::bind(&RaptorDbwCAN::recvGearCmd, this, std::placeholders::_1));
 
   sub_misc_ = this->create_subscription<raptor_dbw_msgs::msg::MiscCmd>(
-    "misc_cmd", 1, std::bind(&DbwNode::recvMiscCmd, this, std::placeholders::_1));
+    "misc_cmd", 1, std::bind(&RaptorDbwCAN::recvMiscCmd, this, std::placeholders::_1));
 
   sub_global_enable_ = this->create_subscription<raptor_dbw_msgs::msg::GlobalEnableCmd>(
-    "global_enable_cmd", 1, std::bind(&DbwNode::recvGlobalEnableCmd, this, std::placeholders::_1));
+    "global_enable_cmd", 1,
+    std::bind(&RaptorDbwCAN::recvGlobalEnableCmd, this, std::placeholders::_1));
 
-  pdu1_relay_pub_ = this->create_publisher<pdu_msgs::msg::RelayCommand>("/pduB/relay_cmd", 1000);
+  pdu1_relay_pub_ = this->create_publisher<raptor_pdu_msgs::msg::RelayCommand>("/pduB/relay_cmd",
+      1000);
   count_ = 0;
 
   dbwDbc_ = NewEagle::DbcBuilder().NewDbc(dbcFile_);
 
   // Set up Timer
   timer_ = this->create_wall_timer(
-    200ms, std::bind(&DbwNode::timerCallback, this));
+    200ms, std::bind(&RaptorDbwCAN::timerCallback, this));
 }
 
-DbwNode::~DbwNode()
+RaptorDbwCAN::~RaptorDbwCAN()
 {
 }
 
-void DbwNode::recvEnable(const std_msgs::msg::Empty::SharedPtr msg)
+void RaptorDbwCAN::recvEnable(const std_msgs::msg::Empty::SharedPtr msg)
 {
   if (msg != NULL) {
     enableSystem();
   }
 }
 
-void DbwNode::recvDisable(const std_msgs::msg::Empty::SharedPtr msg)
+void RaptorDbwCAN::recvDisable(const std_msgs::msg::Empty::SharedPtr msg)
 {
   if (msg != NULL) {
     disableSystem();
   }
 }
 
-void DbwNode::recvCAN(const can_msgs::msg::Frame::SharedPtr msg)
+void RaptorDbwCAN::recvCAN(const can_msgs::msg::Frame::SharedPtr msg)
 {
   if (!msg->is_rtr && !msg->is_error) {
     switch (msg->id) {
@@ -724,7 +730,7 @@ void DbwNode::recvCAN(const can_msgs::msg::Frame::SharedPtr msg)
   }
 }
 
-void DbwNode::recvBrakeCmd(const raptor_dbw_msgs::msg::BrakeCmd::SharedPtr msg)
+void RaptorDbwCAN::recvBrakeCmd(const raptor_dbw_msgs::msg::BrakeCmd::SharedPtr msg)
 {
   NewEagle::DbcMessage * message = dbwDbc_.GetMessage("AKit_BrakeRequest");
 
@@ -767,7 +773,7 @@ void DbwNode::recvBrakeCmd(const raptor_dbw_msgs::msg::BrakeCmd::SharedPtr msg)
   pub_can_->publish(frame);
 }
 
-void DbwNode::recvAcceleratorPedalCmd(
+void RaptorDbwCAN::recvAcceleratorPedalCmd(
   const raptor_dbw_msgs::msg::AcceleratorPedalCmd::SharedPtr msg)
 {
   NewEagle::DbcMessage * message = dbwDbc_.GetMessage("AKit_AccelPdlRequest");
@@ -822,7 +828,7 @@ void DbwNode::recvAcceleratorPedalCmd(
   pub_can_->publish(frame);
 }
 
-void DbwNode::recvSteeringCmd(const raptor_dbw_msgs::msg::SteeringCmd::SharedPtr msg)
+void RaptorDbwCAN::recvSteeringCmd(const raptor_dbw_msgs::msg::SteeringCmd::SharedPtr msg)
 {
   NewEagle::DbcMessage * message = dbwDbc_.GetMessage("AKit_SteeringRequest");
 
@@ -885,7 +891,7 @@ void DbwNode::recvSteeringCmd(const raptor_dbw_msgs::msg::SteeringCmd::SharedPtr
   pub_can_->publish(frame);
 }
 
-void DbwNode::recvGearCmd(const raptor_dbw_msgs::msg::GearCmd::SharedPtr msg)
+void RaptorDbwCAN::recvGearCmd(const raptor_dbw_msgs::msg::GearCmd::SharedPtr msg)
 {
   NewEagle::DbcMessage * message = dbwDbc_.GetMessage("AKit_PrndRequest");
 
@@ -908,7 +914,7 @@ void DbwNode::recvGearCmd(const raptor_dbw_msgs::msg::GearCmd::SharedPtr msg)
   pub_can_->publish(frame);
 }
 
-void DbwNode::recvGlobalEnableCmd(const raptor_dbw_msgs::msg::GlobalEnableCmd::SharedPtr msg)
+void RaptorDbwCAN::recvGlobalEnableCmd(const raptor_dbw_msgs::msg::GlobalEnableCmd::SharedPtr msg)
 {
   NewEagle::DbcMessage * message = dbwDbc_.GetMessage("AKit_GlobalEnbl");
 
@@ -937,7 +943,7 @@ void DbwNode::recvGlobalEnableCmd(const raptor_dbw_msgs::msg::GlobalEnableCmd::S
   pub_can_->publish(frame);
 }
 
-void DbwNode::recvMiscCmd(const raptor_dbw_msgs::msg::MiscCmd::SharedPtr msg)
+void RaptorDbwCAN::recvMiscCmd(const raptor_dbw_msgs::msg::MiscCmd::SharedPtr msg)
 {
   NewEagle::DbcMessage * message = dbwDbc_.GetMessage("AKit_OtherActuators");
 
@@ -987,7 +993,7 @@ void DbwNode::recvMiscCmd(const raptor_dbw_msgs::msg::MiscCmd::SharedPtr msg)
   pub_can_->publish(frame);
 }
 
-bool DbwNode::publishDbwEnabled()
+bool RaptorDbwCAN::publishDbwEnabled()
 {
   bool change = false;
   bool en = enabled();
@@ -1001,7 +1007,7 @@ bool DbwNode::publishDbwEnabled()
   return change;
 }
 
-void DbwNode::timerCallback()
+void RaptorDbwCAN::timerCallback()
 {
   if (clear()) {
     can_msgs::msg::Frame out;
@@ -1048,7 +1054,7 @@ void DbwNode::timerCallback()
   }
 }
 
-void DbwNode::enableSystem()
+void RaptorDbwCAN::enableSystem()
 {
   if (!enable_) {
     if (fault()) {
@@ -1078,7 +1084,7 @@ void DbwNode::enableSystem()
   }
 }
 
-void DbwNode::disableSystem()
+void RaptorDbwCAN::disableSystem()
 {
   if (enable_) {
     enable_ = false;
@@ -1087,7 +1093,7 @@ void DbwNode::disableSystem()
   }
 }
 
-void DbwNode::buttonCancel()
+void RaptorDbwCAN::buttonCancel()
 {
   if (enable_) {
     enable_ = false;
@@ -1096,7 +1102,7 @@ void DbwNode::buttonCancel()
   }
 }
 
-void DbwNode::overrideBrake(bool override)
+void RaptorDbwCAN::overrideBrake(bool override)
 {
   bool en = enabled();
   if (override && en) {
@@ -1112,7 +1118,7 @@ void DbwNode::overrideBrake(bool override)
   }
 }
 
-void DbwNode::overrideAcceleratorPedal(bool override)
+void RaptorDbwCAN::overrideAcceleratorPedal(bool override)
 {
   bool en = enabled();
   if (override && en) {
@@ -1128,7 +1134,7 @@ void DbwNode::overrideAcceleratorPedal(bool override)
   }
 }
 
-void DbwNode::overrideSteering(bool override)
+void RaptorDbwCAN::overrideSteering(bool override)
 {
   bool en = enabled();
   if (override && en) {
@@ -1144,7 +1150,7 @@ void DbwNode::overrideSteering(bool override)
   }
 }
 
-void DbwNode::overrideGear(bool override)
+void RaptorDbwCAN::overrideGear(bool override)
 {
   bool en = enabled();
   if (override && en) {
@@ -1160,7 +1166,7 @@ void DbwNode::overrideGear(bool override)
   }
 }
 
-void DbwNode::timeoutBrake(bool timeout, bool enabled)
+void RaptorDbwCAN::timeoutBrake(bool timeout, bool enabled)
 {
   if (!timeout_brakes_ && enabled_brakes_ && timeout && !enabled) {
     // TODO(NewEagle): Add warning.
@@ -1169,7 +1175,7 @@ void DbwNode::timeoutBrake(bool timeout, bool enabled)
   enabled_brakes_ = enabled;
 }
 
-void DbwNode::timeoutAcceleratorPedal(bool timeout, bool enabled)
+void RaptorDbwCAN::timeoutAcceleratorPedal(bool timeout, bool enabled)
 {
   if (!timeout_accelerator_pedal_ && enabled_accelerator_pedal_ && timeout && !enabled) {
     // TODO(NewEagle): Add warning.
@@ -1178,7 +1184,7 @@ void DbwNode::timeoutAcceleratorPedal(bool timeout, bool enabled)
   enabled_accelerator_pedal_ = enabled;
 }
 
-void DbwNode::timeoutSteering(bool timeout, bool enabled)
+void RaptorDbwCAN::timeoutSteering(bool timeout, bool enabled)
 {
   if (!timeout_steering_ && enabled_steering_ && timeout && !enabled) {
     // TODO(NewEagle): Add warning.
@@ -1187,7 +1193,7 @@ void DbwNode::timeoutSteering(bool timeout, bool enabled)
   enabled_steering_ = enabled;
 }
 
-void DbwNode::faultBrakes(bool fault)
+void RaptorDbwCAN::faultBrakes(bool fault)
 {
   bool en = enabled();
   if (fault && en) {
@@ -1203,7 +1209,7 @@ void DbwNode::faultBrakes(bool fault)
   }
 }
 
-void DbwNode::faultAcceleratorPedal(bool fault)
+void RaptorDbwCAN::faultAcceleratorPedal(bool fault)
 {
   bool en = enabled();
   if (fault && en) {
@@ -1219,7 +1225,7 @@ void DbwNode::faultAcceleratorPedal(bool fault)
   }
 }
 
-void DbwNode::faultSteering(bool fault)
+void RaptorDbwCAN::faultSteering(bool fault)
 {
   bool en = enabled();
   if (fault && en) {
@@ -1235,7 +1241,7 @@ void DbwNode::faultSteering(bool fault)
   }
 }
 
-void DbwNode::faultSteeringCal(bool fault)
+void RaptorDbwCAN::faultSteeringCal(bool fault)
 {
   bool en = enabled();
   if (fault && en) {
@@ -1251,7 +1257,7 @@ void DbwNode::faultSteeringCal(bool fault)
   }
 }
 
-void DbwNode::faultWatchdog(bool fault, uint8_t src, bool braking)
+void RaptorDbwCAN::faultWatchdog(bool fault, uint8_t src, bool braking)
 {
   bool en = enabled();
   if (fault && en) {
@@ -1282,12 +1288,12 @@ void DbwNode::faultWatchdog(bool fault, uint8_t src, bool braking)
   }
 }
 
-void DbwNode::faultWatchdog(bool fault, uint8_t src)
+void RaptorDbwCAN::faultWatchdog(bool fault, uint8_t src)
 {
   faultWatchdog(fault, src, fault_watchdog_using_brakes_);   // No change to 'using brakes' status
 }
 
-void DbwNode::publishJointStates(
+void RaptorDbwCAN::publishJointStates(
   const rclcpp::Time stamp,
   const raptor_dbw_msgs::msg::WheelSpeedReport wheels)
 {
@@ -1308,7 +1314,7 @@ void DbwNode::publishJointStates(
   pub_joint_states_->publish(joint_state_);
 }
 
-void DbwNode::publishJointStates(
+void RaptorDbwCAN::publishJointStates(
   const rclcpp::Time stamp,
   const raptor_dbw_msgs::msg::SteeringReport steering)
 {

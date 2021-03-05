@@ -1,41 +1,45 @@
-// Copyright (c) 2020 New Eagle, All rights reserved.
+// Copyright (c) 2021 New Eagle, All rights reserved.
+// All rights reserved.
+//
+// Software License Agreement (BSD License 2.0)
 //
 // Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
+// modification, are permitted provided that the following conditions
+// are met:
 //
-// * Redistributions of source code must retain the above copyright
-//   notice, this list of conditions and the following disclaimer.
+//  * Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above
+//    copyright notice, this list of conditions and the following
+//    disclaimer in the documentation and/or other materials provided
+//    with the distribution.
+//  * Neither the name of {copyright_holder} nor the names of its
+//    contributors may be used to endorse or promote products derived
+//    from this software without specific prior written permission.
 //
-// * Redistributions in binary form must reproduce the above copyright
-//   notice, this list of conditions and the following disclaimer in the
-//   documentation and/or other materials provided with the distribution.
-//
-// * Neither the name of the {copyright_holder} nor the names of its
-//   contributors may be used to endorse or promote products derived from
-//   this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+// BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef RAPTOR_DBW_CAN__DBWNODE_HPP_
-#define RAPTOR_DBW_CAN__DBWNODE_HPP_
+#ifndef RAPTOR_DBW_CAN__RAPTOR_DBW_CAN_HPP_
+#define RAPTOR_DBW_CAN__RAPTOR_DBW_CAN_HPP_
 
 #include <rclcpp/rclcpp.hpp>
 
 // ROS messages
 #include <can_msgs/msg/frame.hpp>
 #include <geometry_msgs/msg/twist_stamped.hpp>
-#include <pdu_msgs/msg/relay_command.hpp>
-#include <pdu_msgs/msg/relay_state.hpp>
+#include <raptor_pdu_msgs/msg/relay_command.hpp>
+#include <raptor_pdu_msgs/msg/relay_state.hpp>
 #include <raptor_dbw_msgs/msg/accelerator_pedal_cmd.hpp>
 #include <raptor_dbw_msgs/msg/accelerator_pedal_report.hpp>
 #include <raptor_dbw_msgs/msg/actuator_control_mode.hpp>
@@ -64,10 +68,10 @@
 #include <std_msgs/msg/empty.hpp>
 #include <std_msgs/msg/string.hpp>
 
-#include <can_dbc_parser/DbcMessage.hpp>
-#include <can_dbc_parser/DbcSignal.hpp>
-#include <can_dbc_parser/Dbc.hpp>
-#include <can_dbc_parser/DbcBuilder.hpp>
+#include <raptor_can_dbc_parser/DbcMessage.hpp>
+#include <raptor_can_dbc_parser/DbcSignal.hpp>
+#include <raptor_can_dbc_parser/Dbc.hpp>
+#include <raptor_can_dbc_parser/DbcBuilder.hpp>
 
 #include <cmath>
 #include <string>
@@ -79,11 +83,11 @@ using namespace std::chrono_literals;  // NOLINT
 
 namespace raptor_dbw_can
 {
-class DbwNode : public rclcpp::Node
+class RaptorDbwCAN : public rclcpp::Node
 {
 public:
-  explicit DbwNode(const rclcpp::NodeOptions & options);
-  ~DbwNode();
+  explicit RaptorDbwCAN(const rclcpp::NodeOptions & options);
+  ~RaptorDbwCAN();
 
 private:
   void timerCallback();
@@ -222,10 +226,10 @@ private:
   std::string dbcFile_;
 
   // Test stuff
-  rclcpp::Publisher<pdu_msgs::msg::RelayCommand>::SharedPtr pdu1_relay_pub_;
+  rclcpp::Publisher<raptor_pdu_msgs::msg::RelayCommand>::SharedPtr pdu1_relay_pub_;
   uint32_t count_;
 };
 
 }  // namespace raptor_dbw_can
 
-#endif  // RAPTOR_DBW_CAN__DBWNODE_HPP_
+#endif  // RAPTOR_DBW_CAN__RAPTOR_DBW_CAN_HPP_
