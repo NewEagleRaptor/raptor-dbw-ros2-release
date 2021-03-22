@@ -1,0 +1,12 @@
+Source: ros-dashing-raptor-dbw-joystick
+Section: misc
+Priority: optional
+Maintainer: New Eagle <newagleraptorgithub@neweagle.net>
+Build-Depends: debhelper (>= 9.0.0), ros-dashing-ament-cmake-auto, ros-dashing-ament-lint-auto, ros-dashing-ament-lint-common, ros-dashing-raptor-dbw-msgs, ros-dashing-rclcpp, ros-dashing-sensor-msgs, ros-dashing-std-msgs, ros-dashing-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-dashing-raptor-dbw-joystick
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-dashing-raptor-dbw-msgs, ros-dashing-rclcpp, ros-dashing-sensor-msgs, ros-dashing-std-msgs, ros-dashing-ros-workspace
+Description: Joystick controller that interfaces with raptor_dbw_can node
