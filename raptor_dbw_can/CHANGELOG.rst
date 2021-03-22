@@ -2,7 +2,7 @@
 Changelog for package raptor_dbw_can
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.0.0 (2021-02-17)
+1.0.0 (2021-03-22)
 ------------------
-* Initial Release
-* Contributors: Joshua Whitley, New Eagle, neweagleraptor
+* Initial release
+* Contributors: Joshua Whitley, New Eagle, dev, neweagleraptor

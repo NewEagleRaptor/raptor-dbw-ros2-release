@@ -1,38 +1,34 @@
-// Copyright (c) 2018-2019 New Eagle, Copyright (c) 2015-2018, Dataspeed Inc.
-// All rights reserved.
-//
-// Software License Agreement (BSD License 2.0)
+// Copyright (c) 2018-2021 New Eagle, Copyright (c) 2015-2018, Dataspeed Inc.
 //
 // Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions
-// are met:
+// modification, are permitted provided that the following conditions are met:
 //
-//  * Redistributions of source code must retain the above copyright
-//    notice, this list of conditions and the following disclaimer.
-//  * Redistributions in binary form must reproduce the above
-//    copyright notice, this list of conditions and the following
-//    disclaimer in the documentation and/or other materials provided
-//    with the distribution.
-//  * Neither the name of {copyright_holder} nor the names of its
-//    contributors may be used to endorse or promote products derived
-//    from this software without specific prior written permission.
+// * Redistributions of source code must retain the above copyright
+//   notice, this list of conditions and the following disclaimer.
 //
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-// BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// * Redistributions in binary form must reproduce the above copyright
+//   notice, this list of conditions and the following disclaimer in the
+//   documentation and/or other materials provided with the distribution.
+//
+// * Neither the name of the {copyright_holder} nor the names of its
+//   contributors may be used to endorse or promote products derived from
+//   this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "raptor_dbw_joystick/raptor_dbw_joystick.hpp"
 
-#include <cmath>
+#include <memory>
 
 namespace raptor_dbw_joystick
 {
@@ -89,7 +85,6 @@ void RaptorDbwJoystick::cmdCallback()
   if (seconds_passed > message_timeout_sec) {
     data_.joy_accelerator_pedal_valid = false;
     data_.joy_brake_valid = false;
-    return;
   }
 
   // watchdog counter
@@ -153,10 +148,14 @@ void RaptorDbwJoystick::recvJoy(const sensor_msgs::msg::Joy::SharedPtr msg)
 {
   // Check for expected sizes
   if (msg->axes.size() != (size_t)AXIS_COUNT) {
-    RCLCPP_ERROR(this->get_logger(), "Axis count is wrong.");
+    RCLCPP_ERROR_THROTTLE(
+      this->get_logger(), m_clock, CLOCK_1_SEC,
+      "Axis count is wrong.");
   }
   if (msg->buttons.size() != (size_t)BTN_COUNT) {
-    RCLCPP_ERROR(this->get_logger(), "Button count is wrong");
+    RCLCPP_ERROR_THROTTLE(
+      this->get_logger(), m_clock, CLOCK_1_SEC,
+      "Button count is wrong");
   }
 
   // Handle joystick startup

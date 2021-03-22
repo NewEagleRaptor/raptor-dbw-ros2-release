@@ -2,7 +2,7 @@
 Changelog for package raptor_pdu_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.0.0 (2021-02-17)
+1.0.0 (2021-03-22)
 ------------------
-* Initial Release
-* Contributors: New Eagle, neweagleraptor
+* Initial release
+* Contributors: neweagleraptor

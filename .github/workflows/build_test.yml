@@ -4,15 +4,28 @@ on:
   pull_request:
   push:
     branches:
-      - 'dashing'
+      - 'foxy'
 
 jobs:
   test_environment:
     runs-on: [ubuntu-latest]
     strategy:
       fail-fast: false
+      matrix:
+        ros_distribution:
+          - foxy
+          - rolling
+        include:
+          # Foxy Fitzroy (June 2020 - May 2023)
+          - docker_image: rostooling/setup-ros-docker:ubuntu-focal-ros-foxy-ros-base-latest
+            ros_distribution: foxy
+            ros_version: 2
+          # Rolling Ridley  (June 2020 - Present)
+          - docker_image: rostooling/setup-ros-docker:ubuntu-focal-ros-rolling-ros-base-latest
+            ros_distribution: rolling
+            ros_version: 2
     container:
-      image: rostooling/setup-ros-docker:ubuntu-bionic-ros-dashing-ros-base-latest
+      image: ${{ matrix.docker_image }}
     steps:
       - name: setup directories
         run: mkdir -p ros_ws/src
@@ -30,5 +43,5 @@ jobs:
             raptor_dbw_msgs
             raptor_pdu
             raptor_pdu_msgs
-          target-ros2-distro: dashing
+          target-ros2-distro: ${{ matrix.ros_distribution }}
           vcs-repo-file-url: ""
