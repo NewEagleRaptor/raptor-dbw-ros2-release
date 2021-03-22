@@ -1,0 +1,12 @@
+Source: ros-dashing-raptor-pdu
+Section: misc
+Priority: optional
+Maintainer: New Eagle <neweagleraptorgithub@neweagle.net>
+Build-Depends: debhelper (>= 9.0.0), ros-dashing-ament-cmake-auto, ros-dashing-ament-lint-auto, ros-dashing-ament-lint-common, ros-dashing-can-msgs, ros-dashing-raptor-can-dbc-parser, ros-dashing-raptor-pdu-msgs, ros-dashing-rclcpp, ros-dashing-std-msgs, ros-dashing-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-dashing-raptor-pdu
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-dashing-can-msgs, ros-dashing-raptor-can-dbc-parser, ros-dashing-raptor-pdu-msgs, ros-dashing-rclcpp, ros-dashing-std-msgs, ros-dashing-ros-workspace
+Description: Interface for the New Eagle Multiplex Power Distribution Module (MPDM) https://store.neweagle.net/product/multiplexed-power-distribution-module-mpdm/
