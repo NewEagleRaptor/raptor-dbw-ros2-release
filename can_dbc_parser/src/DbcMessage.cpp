@@ -26,8 +26,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include <raptor_can_dbc_parser/DbcMessage.hpp>
-#include <raptor_can_dbc_parser/DbcUtilities.hpp>
+#include <can_dbc_parser/DbcMessage.hpp>
+#include <can_dbc_parser/DbcUtilities.hpp>
 
 #include <cstring>
 #include <map>
@@ -79,9 +79,9 @@ std::string DbcMessage::GetName()
   return _name;
 }
 
-can_msgs::msg::Frame DbcMessage::GetFrame()
+Frame DbcMessage::GetFrame()
 {
-  can_msgs::msg::Frame frame;
+  Frame frame;
 
   frame.id = _id;
   frame.dlc = _dlc;
@@ -129,7 +129,7 @@ can_msgs::msg::Frame DbcMessage::GetFrame()
   return frame;
 }
 
-void DbcMessage::SetFrame(const can_msgs::msg::Frame::SharedPtr msg)
+void DbcMessage::SetFrame(const Frame::SharedPtr msg)
 {
   uint8_t * ptr = static_cast<uint8_t *>(msg->data._M_elems);
 
