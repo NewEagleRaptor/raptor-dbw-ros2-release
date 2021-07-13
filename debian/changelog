@@ -1,0 +1,22 @@
+ros-foxy-can-dbc-parser (1.1.1-1focal) focal; urgency=high
+
+  * Fix compile warnings
+  * Contributors: neweagleraptor
+
+ -- New Eagle <neweagleraptorgithub@neweagle.net>  Tue, 13 Jul 2021 04:00:00 -0000
+
+ros-foxy-can-dbc-parser (1.1.0-1focal) focal; urgency=high
+
+  * Change package name raptor_can_dbc_parser back to can_dbc_parser (no function change)
+  * Contributors: neweagleraptor
+
+ -- New Eagle <neweagleraptorgithub@neweagle.net>  Mon, 14 Jun 2021 04:00:00 -0000
+
+ros-foxy-can-dbc-parser (1.0.0-1focal) focal; urgency=high
+
+  * Initial release
+  * Contributors: Joshua Whitley, neweagleraptor
+
+ -- New Eagle <neweagleraptorgithub@neweagle.net>  Mon, 22 Mar 2021 04:00:00 -0000
+
+
