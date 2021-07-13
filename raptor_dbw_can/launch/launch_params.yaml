@@ -1,0 +1,9 @@
+/**:
+  ros__parameters:
+  # Kvaser node parameters
+    hardware_id: 22024
+    circuit_id: 0
+    bit_rate: 500000
+    enable_echo: false
+  # DBW CAN node
+    max_steer_angle: 470.0
