@@ -2,6 +2,9 @@
 Changelog for package raptor_dbw_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.1.1 (2021-07-13)
+------------------
+
 1.1.0 (2021-06-14)
 ------------------
 * Misc. cleanup & comment improvement
