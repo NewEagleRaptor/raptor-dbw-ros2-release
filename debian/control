@@ -1,0 +1,12 @@
+Source: ros-foxy-raptor-dbw-joystick
+Section: misc
+Priority: optional
+Maintainer: New Eagle <newagleraptorgithub@neweagle.net>
+Build-Depends: debhelper (>= 9.0.0), ros-foxy-ament-cmake-auto, ros-foxy-ament-lint-auto, ros-foxy-ament-lint-common, ros-foxy-raptor-dbw-msgs, ros-foxy-rclcpp, ros-foxy-sensor-msgs, ros-foxy-std-msgs, ros-foxy-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-foxy-raptor-dbw-joystick
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-foxy-raptor-dbw-msgs, ros-foxy-rclcpp, ros-foxy-sensor-msgs, ros-foxy-std-msgs, ros-foxy-ros-workspace
+Description: Joystick controller that interfaces with raptor_dbw_can node

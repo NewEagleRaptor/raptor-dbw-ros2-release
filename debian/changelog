@@ -1,0 +1,30 @@
+ros-foxy-raptor-dbw-joystick (1.2.0-1focal) focal; urgency=high
+
+  * Update DBC to version 3.4
+  * Contributors: neweagleraptor
+
+ -- New Eagle <newagleraptorgithub@neweagle.net>  Tue, 30 Nov 2021 05:00:00 -0000
+
+ros-foxy-raptor-dbw-joystick (1.1.1-1focal) focal; urgency=high
+
+
+
+ -- New Eagle <newagleraptorgithub@neweagle.net>  Tue, 13 Jul 2021 04:00:00 -0000
+
+ros-foxy-raptor-dbw-joystick (1.1.0-1focal) focal; urgency=high
+
+  * Misc. cleanup & comment improvement
+  * Update DBW node to use params from launch file
+  * Fix unit conversion issues - steering was in radians, should be degrees
+  * Contributors: neweagleraptor
+
+ -- New Eagle <newagleraptorgithub@neweagle.net>  Mon, 14 Jun 2021 04:00:00 -0000
+
+ros-foxy-raptor-dbw-joystick (1.0.0-1focal) focal; urgency=high
+
+  * Initial release
+  * Contributors: Joshua Whitley, neweagleraptor
+
+ -- New Eagle <newagleraptorgithub@neweagle.net>  Mon, 22 Mar 2021 04:00:00 -0000
+
+
