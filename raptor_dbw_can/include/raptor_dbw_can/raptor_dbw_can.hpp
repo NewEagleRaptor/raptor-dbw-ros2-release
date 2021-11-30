@@ -48,6 +48,7 @@
 #include <raptor_dbw_msgs/msg/brake_cmd.hpp>
 #include <raptor_dbw_msgs/msg/brake_report.hpp>
 #include <raptor_dbw_msgs/msg/driver_input_report.hpp>
+#include <raptor_dbw_msgs/msg/exit_report.hpp>
 #include <raptor_dbw_msgs/msg/fault_actions_report.hpp>
 #include <raptor_dbw_msgs/msg/gear_cmd.hpp>
 #include <raptor_dbw_msgs/msg/gear_report.hpp>
@@ -101,10 +102,12 @@ using raptor_dbw_msgs::msg::ActuatorControlMode;
 using raptor_dbw_msgs::msg::Brake2Report;
 using raptor_dbw_msgs::msg::BrakeCmd;
 using raptor_dbw_msgs::msg::BrakeReport;
+using raptor_dbw_msgs::msg::ButtonState;
 using raptor_dbw_msgs::msg::DoorLock;
 using raptor_dbw_msgs::msg::DoorRequest;
 using raptor_dbw_msgs::msg::DoorState;
 using raptor_dbw_msgs::msg::DriverInputReport;
+using raptor_dbw_msgs::msg::ExitReport;
 using raptor_dbw_msgs::msg::FaultActionsReport;
 using raptor_dbw_msgs::msg::Gear;
 using raptor_dbw_msgs::msg::GearCmd;
@@ -118,6 +121,7 @@ using raptor_dbw_msgs::msg::HmiGlobalEnableReport;
 using raptor_dbw_msgs::msg::HornState;
 using raptor_dbw_msgs::msg::Ignition;
 using raptor_dbw_msgs::msg::LowBeam;
+using raptor_dbw_msgs::msg::LowBeamState;
 using raptor_dbw_msgs::msg::LowVoltageSystemReport;
 using raptor_dbw_msgs::msg::MiscCmd;
 using raptor_dbw_msgs::msg::MiscReport;
@@ -194,6 +198,11 @@ private:
  * \param[in] msg The message received over CAN.
  */
   void recvDriverInputRpt(const Frame::SharedPtr msg);
+
+/** \brief Convert an Exit Report received over CAN into a ROS message.
+ * \param[in] msg The message received over CAN.
+ */
+  void recvExitRpt(const Frame::SharedPtr msg);
 
 /** \brief Convert a Fault Action Report received over CAN into a ROS message.
  * \param[in] msg The message received over CAN.
@@ -311,6 +320,14 @@ private:
 
   // Other useful variables
 
+  /** \brief Enumeration of driver ignores */
+  enum ListIgnores
+  {
+    IGNORE_ACCEL = 0,  /**< Acceleration pedal ignore */
+    IGNORE_STEER,      /**< Steering ignore */
+    NUM_IGNORES   /**< Total number of driver ignores */
+  };
+
   /** \brief Enumeration of driver overrides */
   enum ListOverrides
   {
@@ -359,6 +376,7 @@ private:
     "watchdog"
   };
 
+  bool ignores_[NUM_IGNORES];
   bool overrides_[NUM_OVERRIDES];
   bool faults_[NUM_FAULTS];
   bool enables_[NUM_ENABLES];
@@ -375,8 +393,9 @@ private:
 /** \brief Check for an active driver override.
  * \returns TRUE if there is any active driver override, FALSE otherwise
  */
-  inline bool override () {return overrides_[OVR_BRAKE] || overrides_[OVR_ACCEL] ||
-           overrides_[OVR_STEER] || overrides_[OVR_GEAR];}
+  inline bool override () {return overrides_[OVR_BRAKE] ||
+           (!ignores_[IGNORE_ACCEL] && overrides_[OVR_ACCEL]) ||
+           (!ignores_[IGNORE_STEER] && overrides_[OVR_STEER]) || overrides_[OVR_GEAR];}
 
 /** \brief Check for an active driver override.
  * \returns TRUE if DBW is enabled && there is any active driver override, FALSE otherwise
@@ -403,8 +422,9 @@ private:
   /** \brief Set the specified override
    * \param[in] which_ovr Which override to set
    * \param[in] override The value to set the override to
+   * \param[in] ignore The value to skip the override
    */
-  void setOverride(ListOverrides which_ovr, bool override);
+  void setOverride(ListOverrides which_ovr, bool override, bool ignore);
 
   /** \brief Set the specified fault; these faults disable DBW control when active
    * \param[in] which_fault Which fault to set
@@ -490,6 +510,7 @@ private:
   rclcpp::Publisher<BrakeReport>::SharedPtr pub_brake_;
   rclcpp::Publisher<Brake2Report>::SharedPtr pub_brake_2_report_;
   rclcpp::Publisher<DriverInputReport>::SharedPtr pub_driver_input_;
+  rclcpp::Publisher<ExitReport>::SharedPtr pub_exit_report_;
   rclcpp::Publisher<FaultActionsReport>::SharedPtr pub_fault_actions_report_;
   rclcpp::Publisher<GearReport>::SharedPtr pub_gear_;
   rclcpp::Publisher<GpsReferenceReport>::SharedPtr pub_gps_reference_report_;
